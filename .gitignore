@@ -16,6 +16,9 @@ lib/ucanaccess-5.0.1.jar
 # Documentation-only archive; it contains no Java class files
 lib/lib/itext-2.1.7-javadoc.jar
 
+# Archive with unresolved provenance and redistribution terms; retain locally only
+lib/lib/js-extra-classes.jar
+
 # Legacy UCanAccess 3.0.7 distribution; the project targets UCanAccess 5.0.1
 lib/UCanAccess-3.0.7-bin/
 

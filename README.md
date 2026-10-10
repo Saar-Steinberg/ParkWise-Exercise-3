@@ -70,10 +70,11 @@ Windows uses `;` as the classpath separator. On macOS or Linux, replace it with 
 - The report logic calls JasperReports to fill and display `AnnualReport.jasper`; successful report rendering or PDF/XML generation has not been verified.
 - No automated tests or build automation were found.
 - The repository retains legacy and optional-looking third-party libraries because runtime non-use has not been proven. JasperReports 7.0.1 also declares runtime dependencies that are not present by filename in the retained library tree, so reporting may require additional dependency review.
+- `lib/lib/js-extra-classes.jar` is excluded from the public-release candidate because its provenance and redistribution terms could not be verified. The original local copy is retained. No project source directly references its classes, but runtime non-necessity has not been proven; a report workflow may require a separately verified copy.
 
 ## Local data and repository hygiene
 
-The `.gitignore` excludes the local Access database and lock files, compiled output, packaged application JARs, generated reports, exact duplicate JARs, a documentation-only JAR, and a legacy UCanAccess distribution. Required source, report templates, and the retained `lib/lib` dependency copies remain tracked.
+The `.gitignore` excludes the local Access database and lock files, compiled output, packaged application JARs, generated reports, exact duplicate JARs, a documentation-only JAR, a JAR with unresolved provenance, and a legacy UCanAccess distribution. Required source, report templates, and retained `lib/lib` dependency copies remain tracked except for the locally preserved `js-extra-classes.jar`.
 
 `pricelist.json` is retained as an example price-list payload. Current source accepts JSON content through its adapter/controller path but does not directly read that filename.
 
