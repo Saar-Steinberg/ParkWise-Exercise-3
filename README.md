@@ -1,70 +1,105 @@
-# ParkWise — Exercise 3
+# ParkWise — Parking Management System
 
-A later collaborative Java coursework exercise that expands the ParkWise parking-management scenario. It is preserved for portfolio review as coursework, not as a production-ready system or a claim of sole authorship.
+ParkWise is a Java desktop application developed as part of a collaborative information systems coursework project. It models a parking management system, including parking-space management, entry and exit workflows, pricing logic, simulated payment integrations, and annual reporting.
 
-## Confirmed scope
+This repository preserves the third exercise in the ParkWise coursework sequence. It is intended for code review and educational reference, not as a production-ready application.
 
-The source includes:
+## Key Features
 
-- Swing welcome, administrator, customer, and report screens;
-- parking-lot, parking-space, vehicle, client, conveyor, price-list, and parking-session domain classes;
-- Access-backed repository loading for parking lots, spaces, conveyors, and sessions;
-- parking entry/exit, pricing, and simulated payment/gate integrations; and
-- a JasperReports-based annual-report integration and retained report template files.
+- **Parking Management** — Domain models and repository logic for parking lots, parking spaces, vehicles, and parking sessions.
+- **Entry and Exit Workflows** — Application flows involving parking sessions and conveyor/gate interfaces.
+- **Pricing and Payments** — Pricing logic and simulated payment and gate integrations.
+- **Database Integration** — Microsoft Access connectivity through UCanAccess.
+- **Reporting** — JasperReports templates and reporting integration. Report generation has not been runtime-verified.
 
-The credit-card and gate interactions are simulations in the source. Report behavior has not yet been runtime-verified and should not be represented as a confirmed export workflow.
+## Technology Stack
 
-## Technology
+- **Language:** Java (JDK 21)
+- **Desktop UI:** Java Swing
+- **Database:** Microsoft Access, accessed through UCanAccess 5.0.1
+- **Reporting:** JasperReports 7.0.1
+- **Additional Libraries:** Gson and supporting third-party JARs
 
-- Java; the supplied application JAR was compiled for Java 21.
-- Swing and the Java standard library.
-- UCanAccess 5.0.1 for Microsoft Access connectivity.
-- JasperReports 7.0.1 and retained supporting JARs.
-- Gson 2.10.1.
-- Microsoft Access database (`ParkWiseDB.accdb`) as a local runtime prerequisite.
+The project does not include a Maven or Gradle build configuration. Dependencies are retained in the repository's `lib/` directory.
 
-No Maven or Gradle build is included.
+## Architecture and Source Layout
 
-## Source layout
+The source follows a layered organization that separates the user interface, application logic, and domain objects.
 
 ```text
 src/
-├── Main/                    # application and database-test entry points
-├── Boundary/                # Swing screens and system interfaces/adapters
-├── Control/                 # repository, conveyor, payment, pricing, reporting logic
-├── Entity/                  # domain objects
-├── Enums/                   # domain enumerations
-└── utils/                   # database connection helper
-lib/                         # retained runtime and reporting dependency JARs
+├── Main/       # Application and database-test entry points
+├── Boundary/   # Swing screens, interfaces, and adapters
+├── Control/    # Parking, pricing, payment, repository, and report logic
+├── Entity/     # Domain objects
+├── Enums/      # Domain enumerations
+└── utils/      # Database connection utilities
+
+lib/            # Third-party dependency JARs
 ```
 
-## Local setup
+- **Boundary** contains the desktop interface and interfaces to external-system simulations.
+- **Control** contains application workflows and business logic.
+- **Entity** represents the main domain objects used by the system.
 
-1. Install JDK 21. Invoke `java.exe` from that JDK rather than an older system Java installation.
-2. Place a reviewed local copy of `ParkWiseDB.accdb` in the project root. It is deliberately ignored and is not supplied for publication.
-3. Retain the provided `lib` directory unchanged; it contains UCanAccess, JasperReports, and supporting JARs used by the existing project.
+## Local Setup
 
-From PowerShell on Windows:
+### Requirements
+
+- Windows
+- JDK 21
+- The existing `lib/` dependency directory
+- A compatible local copy of `ParkWiseDB.accdb`
+
+The database is intentionally excluded from this repository. A reviewed local database must be placed in the project root before running database-dependent workflows. Do not use production or personal data.
+
+### Compile and Run
+
+Open PowerShell in the project root. Set `$jdk` to your local JDK 21 `bin` directory:
 
 ```powershell
 $jdk = 'C:\path\to\jdk-21\bin'
-$sources = Get-ChildItem src -Recurse -Filter *.java | ForEach-Object FullName
-& "$jdk\javac.exe" -cp 'lib\*;lib\lib\*' -d out $sources
-& "$jdk\java.exe" -cp 'out;src;lib\*;lib\lib\*' Main.MainApp
+
+$classpath = 'lib\*;lib\lib\*'
+
+New-Item -ItemType Directory -Force out | Out-Null
+
+$sources = Get-ChildItem src -Recurse -Filter *.java |
+    ForEach-Object FullName
+
+& "$jdk\javac.exe" -encoding UTF-8 `
+    -cp $classpath `
+    -d out `
+    $sources
 ```
 
-`src` is included at runtime so the report template resources remain available. The classpath separator is `;` on Windows and `:` on macOS/Linux. The desktop UI has not been validated outside Windows.
+If compilation succeeds, launch the application with:
 
-For a database connectivity check, use the same classpath and run `Main.TestDB` instead of `Main.MainApp`.
+```powershell
+$runtimeClasspath = 'out;src;lib\*;lib\lib\*'
 
-## Known limitations and validation status
+& "$jdk\java.exe" `
+    -cp $runtimeClasspath `
+    Main.MainApp
+```
 
-- Runtime behavior depends on an unreviewed local Access database; do not publish it without a data review.
-- The application writes through its repository and payment/session workflows; avoid running it against data that must remain unchanged.
-- A generated annual-report PDF/XML pair was found locally but is excluded as output, not documentation of tested behavior.
-- No automated test suite or build automation was found.
-- The source compiled successfully with JDK 21 during repository preparation. No database-backed or GUI runtime check was performed because the local database is unreviewed.
+The `src` directory is included on the runtime classpath so that report-template resources can be located.
 
-## Repository hygiene
+**Note:** Compilation has been verified with JDK 21. Full runtime setup remains unverified, including all reporting dependencies and database-backed workflows. The commands above document the intended local setup, not a guarantee that every feature runs successfully.
 
-The ignore rules exclude local databases, Access lock files, compiled output, packaged application JARs, and generated reports. The dependency libraries are intentionally retained and not ignored. Review course-sharing rules and obtain all collaborators' consent before publishing any version of this coursework.
+To run the database connectivity check, use the same runtime classpath and replace `Main.MainApp` with `Main.TestDB`.
+
+## Validation Status and Limitations
+
+- Java source compilation succeeded with JDK 21 during repository preparation.
+- No automated test suite or Maven/Gradle build configuration was found.
+- Database connectivity and GUI workflows have not been runtime-tested.
+- Payment and gate integrations are simulations, not live external services.
+- JasperReports integration is present in the source, but successful report generation has not been verified.
+- The application may write to the local database during normal workflows. Use a disposable, reviewed database copy for testing.
+
+## Coursework and Attribution
+
+This is a collaborative academic project. The repository is preserved for educational reference and code review; it does not claim sole authorship or production readiness.
+
+
