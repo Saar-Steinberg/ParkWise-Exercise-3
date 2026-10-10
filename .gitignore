@@ -1,0 +1,33 @@
+# Java build output
+bin/
+out/
+*.class
+
+# Locally packaged application artifact
+ParkWise.jar
+
+# Exact duplicates of retained lib/lib runtime dependencies
+lib/commons-lang3-3.8.1.jar
+lib/commons-logging-1.2.jar
+lib/hsqldb-2.5.0.jar
+lib/jackcess-3.0.1.jar
+lib/ucanaccess-5.0.1.jar
+
+# Documentation-only archive; it contains no Java class files
+lib/lib/itext-2.1.7-javadoc.jar
+
+# Legacy UCanAccess 3.0.7 distribution; the project targets UCanAccess 5.0.1
+lib/UCanAccess-3.0.7-bin/
+
+# Unreviewed local Access database and its lock files
+ParkWiseDB.accdb
+*.laccdb
+
+# Generated report output
+AnnualReport_*.pdf
+AnnualReport_*.xml
+ClubGrowthReport_*.txt
+
+# Keep the portable editor configuration only
+.vscode/*
+!.vscode/settings.json
