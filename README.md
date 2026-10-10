@@ -1,70 +1,80 @@
-# ParkWise — Exercise 3
+# ParkWise Exercise 3
 
-A later collaborative Java coursework exercise that expands the ParkWise parking-management scenario. It is preserved for portfolio review as coursework, not as a production-ready system or a claim of sole authorship.
+ParkWise Exercise 3 is a collaborative Java coursework project that models a desktop parking-management workflow. It is presented as an academic portfolio artifact, not as a production-ready application or a claim of sole authorship.
 
-## Confirmed scope
+## What the source implements
 
-The source includes:
+- Swing screens for welcome, administrator, customer, and report flows.
+- Access-backed loading of parking lots, parking spaces, conveyors, and parking sessions.
+- Parking-space allocation through conveyor logic, including occupied-space updates.
+- Parking-session pricing and a customer payment flow.
+- A JSON price-list payload adapter that forwards JSON content to pricing controllers.
+- An annual-report viewer integration using JasperReports.
 
-- Swing welcome, administrator, customer, and report screens;
-- parking-lot, parking-space, vehicle, client, conveyor, price-list, and parking-session domain classes;
-- Access-backed repository loading for parking lots, spaces, conveyors, and sessions;
-- parking entry/exit, pricing, and simulated payment/gate integrations; and
-- a JasperReports-based annual-report integration and retained report template files.
+The gate sensor and credit-card gateway are simulations. `Main.MainApp` uses a fixed sample vehicle identifier for the sensor, and `CreditCardSystem` always approves a payment. These are coursework stubs, not hardware or payment-service integrations.
 
-The credit-card and gate interactions are simulations in the source. Report behavior has not yet been runtime-verified and should not be represented as a confirmed export workflow.
+## Technology and dependencies
 
-## Technology
-
-- Java; the supplied application JAR was compiled for Java 21.
-- Swing and the Java standard library.
-- UCanAccess 5.0.1 for Microsoft Access connectivity.
-- JasperReports 7.0.1 and retained supporting JARs.
-- Gson 2.10.1.
-- Microsoft Access database (`ParkWiseDB.accdb`) as a local runtime prerequisite.
+- Java 21 - the source was compiled successfully with JDK 21 during repository preparation.
+- Java Swing - desktop user interface.
+- Microsoft Access through UCanAccess 5.0.1.
+- JasperReports 7.0.1 - reporting integration.
+- Gson 2.10.1 - retained in `lib/gson-2.10.1.jar`; the current Java source does not directly import Gson.
+- Local third-party support JARs in `lib/lib`.
 
 No Maven or Gradle build is included.
 
-## Source layout
+## Project structure
 
 ```text
 src/
-├── Main/                    # application and database-test entry points
-├── Boundary/                # Swing screens and system interfaces/adapters
-├── Control/                 # repository, conveyor, payment, pricing, reporting logic
-├── Entity/                  # domain objects
-├── Enums/                   # domain enumerations
-└── utils/                   # database connection helper
-lib/                         # retained runtime and reporting dependency JARs
+|- Main/       application entry point and database connectivity check
+|- Boundary/   Swing screens, system interfaces, adapters, report resources
+|- Control/    repository, conveyor, payment, pricing, and report logic
+|- Entity/     parking-domain objects
+|- Enums/      domain enumerations
+`- utils/      database connection helper
+lib/            retained third-party dependencies
 ```
 
-## Local setup
+`Main.MainApp` is the desktop application entry point. `Main.TestDB` only checks that the Access driver and local database can be opened.
 
-1. Install JDK 21. Invoke `java.exe` from that JDK rather than an older system Java installation.
-2. Place a reviewed local copy of `ParkWiseDB.accdb` in the project root. It is deliberately ignored and is not supplied for publication.
-3. Retain the provided `lib` directory unchanged; it contains UCanAccess, JasperReports, and supporting JARs used by the existing project.
+## Prerequisites
 
-From PowerShell on Windows:
+1. JDK 21. Use `java.exe` from the same JDK installation as `javac.exe`.
+2. A reviewed local `ParkWiseDB.accdb` placed in the repository root. It is required at runtime but deliberately not included in the repository.
+3. The retained `lib` directory. Do not remove or rearrange its JARs when reproducing the current classpath.
+
+## Compile and launch (Windows PowerShell)
+
+From the repository root:
 
 ```powershell
 $jdk = 'C:\path\to\jdk-21\bin'
 $sources = Get-ChildItem src -Recurse -Filter *.java | ForEach-Object FullName
-& "$jdk\javac.exe" -cp 'lib\*;lib\lib\*' -d out $sources
+New-Item -ItemType Directory -Force out | Out-Null
+& "$jdk\javac.exe" -encoding UTF-8 -cp 'lib\*;lib\lib\*' -d out $sources
 & "$jdk\java.exe" -cp 'out;src;lib\*;lib\lib\*' Main.MainApp
 ```
 
-`src` is included at runtime so the report template resources remain available. The classpath separator is `;` on Windows and `:` on macOS/Linux. The desktop UI has not been validated outside Windows.
+The compilation command above was verified with JDK 21. The launch command follows the actual `Main.MainApp` entry point and includes `src` so `ReportLogic` can load `/Boundary/AnnualReport.jasper` as a classpath resource. It has **not** been runtime-verified against a database; do not run it against data that must remain unchanged.
 
-For a database connectivity check, use the same classpath and run `Main.TestDB` instead of `Main.MainApp`.
+To run the database connectivity check instead, replace `Main.MainApp` with `Main.TestDB` in the second command. This also opens the local database and was not run during repository preparation.
 
-## Known limitations and validation status
+Windows uses `;` as the classpath separator. On macOS or Linux, replace it with `:`; the desktop application has not been validated on those platforms.
 
-- Runtime behavior depends on an unreviewed local Access database; do not publish it without a data review.
-- The application writes through its repository and payment/session workflows; avoid running it against data that must remain unchanged.
-- A generated annual-report PDF/XML pair was found locally but is excluded as output, not documentation of tested behavior.
-- No automated test suite or build automation was found.
-- The source compiled successfully with JDK 21 during repository preparation. No database-backed or GUI runtime check was performed because the local database is unreviewed.
+## Validation status and limitations
 
-## Repository hygiene
+- Confirmed: all Java source compiled successfully with JDK 21 using `lib\*;lib\lib\*`.
+- Not tested: database connectivity, GUI interaction, parking/payment workflows, price-list import execution, or report viewing/export.
+- The report logic calls JasperReports to fill and display `AnnualReport.jasper`; successful report rendering or PDF/XML generation has not been verified.
+- No automated tests or build automation were found.
+- The repository retains legacy and optional-looking third-party libraries because runtime non-use has not been proven. JasperReports 7.0.1 also declares runtime dependencies that are not present by filename in the retained library tree, so reporting may require additional dependency review.
 
-The ignore rules exclude local databases, Access lock files, compiled output, packaged application JARs, and generated reports. The dependency libraries are intentionally retained and not ignored. Review course-sharing rules and obtain all collaborators' consent before publishing any version of this coursework.
+## Local data and repository hygiene
+
+The `.gitignore` excludes the local Access database and lock files, compiled output, packaged application JARs, generated reports, exact duplicate JARs, a documentation-only JAR, and a legacy UCanAccess distribution. Required source, report templates, and the retained `lib/lib` dependency copies remain tracked.
+
+`pricelist.json` is retained as an example price-list payload. Current source accepts JSON content through its adapter/controller path but does not directly read that filename.
+
+Third-party JARs are included for the coursework setup. UCanAccess includes Apache 2.0 licensing information, while JasperReports 7.0.1 includes LGPL v3 licensing information; review the licensing and redistribution terms of all third-party JARs before making the repository public.
