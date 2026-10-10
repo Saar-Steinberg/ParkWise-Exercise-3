@@ -57,7 +57,7 @@ New-Item -ItemType Directory -Force out | Out-Null
 & "$jdk\java.exe" -cp 'out;src;lib\*;lib\lib\*' Main.MainApp
 ```
 
-The compilation command above was verified with JDK 21. The launch command follows the actual `Main.MainApp` entry point and includes `src` so `ReportLogic` can load `/Boundary/AnnualReport.jasper` as a classpath resource. It has **not** been runtime-verified against a database; do not run it against data that must remain unchanged.
+The compilation command above was verified with JDK 21. The launch command follows the actual `Main.MainApp` entry point and includes `src` so `ReportLogic` can load `/Boundary/AnnualReport.jasper` as a classpath resource. It has **not** been runtime-verified against a database; do not run it against data that must remain unchanged. Application workflows may write to the local database; use a reviewed disposable copy for any runtime testing.
 
 To run the database connectivity check instead, replace `Main.MainApp` with `Main.TestDB` in the second command. This also opens the local database and was not run during repository preparation.
 
